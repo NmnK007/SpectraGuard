@@ -1,6 +1,8 @@
 # SpectraGuard
 
-A voice-forensics hackathon workspace with mock payment decisions. Inspired by the operational information hierarchy of [SOCius](https://pixelean.com/case-studies/socius/), with original UI components. React, Vite, Web Audio, and a small Fetch API service; deploys as a self-contained Cloudflare Worker.
+**Built for Raksham: AI Cybersecurity Hackathon**
+
+SpectraGuard is a voice forensics workspace for mock payment decisions. It uses React and Vite for the interface, Web Audio for local analysis, and a Fetch API service for session challenges. The production build packages the app as a Cloudflare Worker.
 
 ## Run
 
@@ -23,7 +25,7 @@ Open http://127.0.0.1:5178. `npm test` runs security, policy, and DSP checks. `n
 
 ## What is deliberately unverified
 
-The supplied archive contained research and a proposal, not trained weights or a labeled evaluation corpus. Synthetic and replay scores are simulated in demo cases. Local audio always reports those models unavailable and routes usable audio to independent verification. A spectrogram is not a fraud classifier. No accuracy, EER, FPR, or model latency has been measured.
+The supplied archive contained research and a proposal, not trained weights or a labeled evaluation corpus. Synthetic and replay scores are simulated in demo cases. Without imported models, local analysis marks those scores unavailable and routes usable audio to independent verification. A spectrogram is not a fraud classifier. No accuracy, EER, FPR, or model latency has been measured.
 
 Session freshness validates a submission envelope. The supplied digest is a client assertion; it is not attestation, nor proof that audio was generated after the challenge. The spoken phrase is not ASR-verified. Browser permissions, good audio quality, and a fresh nonce do not prove a physical microphone or exclude a virtual source, client compromise, or live relay. Acoustic replay and injection are separate branches and need independent evaluation.
 
@@ -31,9 +33,24 @@ The challenge store is ephemeral and per process/isolate. Restarts, deployment, 
 
 Audio and manual transcripts are not sent to the server. Server challenge state holds a session identifier, mock transaction fingerprint, expiry, and used marker; expired entries are removed on the next request. A digest is checked and discarded. No application-level request/audio/transcript logging exists. Browser session arrays retain local features and manual text until cleared/reloaded; raw media buffers are released after processing, without a forensic-erasure guarantee. Hosting may keep ordinary request metadata. No localStorage, analytics, or voiceprint database.
 
-## Design choice
+## How it was built
 
-SOCius fits the operator workflow: calm charcoal surfaces, restrained lime accents, clear hierarchy, branch-level evidence, and actionable next steps. Cyntra is a strong marketing reference, while the second Dribbble reference is a personal cyberpunk portfolio. The UI favors operational readability, uses amber for attention and blue for uncertainty, and labels simulated inputs at the point of use.
+```mermaid
+flowchart TD
+    UI["React and Vite workspace"] --> MODE{"Analysis mode"}
+    MODE -->|"Demo"| DEMO["Load simulated scenario evidence"]
+    MODE -->|"Local audio"| CAP["Consent, then record or choose an audio file"]
+    CAP --> DSP["Web Audio: decode, check quality, and build a spectrogram"]
+    CAP --> SESSION["Fetch API: issue and check a one-time session challenge"]
+    DSP --> MODELS["Score synthetic speech and acoustic replay if models are loaded"]
+    UI --> TEXT["Check manual transcript for scam cues"]
+    DEMO --> POLICY
+    DSP --> POLICY
+    MODELS --> POLICY
+    SESSION --> POLICY
+    TEXT --> POLICY
+    POLICY["Combine available evidence with mock payment context"] --> OUTCOME["Show the next step and offer a redacted report"]
+```
 
 ## Next research work
 
