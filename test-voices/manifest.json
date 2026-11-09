@@ -1,0 +1,49 @@
+﻿{
+    "title":  "SpectraGuard synthetic voice smoke-test clips",
+    "generatedLocally":  true,
+    "generator":  "Windows System.Speech, Microsoft Zira Desktop",
+    "intendedUse":  "Manual local UI smoke tests only. Not training data or validation evidence.",
+    "samples":  [
+                    {
+                        "file":  "01_genuine_everyday.wav",
+                        "label":  "Genuine-style benign control",
+                        "script":  "Hi, I am checking that the usual payment arrived. Please let me know when you have a moment."
+                    },
+                    {
+                        "file":  "02_genuine_noisy_context.wav",
+                        "label":  "Genuine-style benign control",
+                        "script":  "I am calling from a busy place, so the connection may sound a little unclear. I can call back later."
+                    },
+                    {
+                        "file":  "03_scam_urgency.wav",
+                        "label":  "Scam-script synthetic speech",
+                        "script":  "This is the bank security team. Your account is at risk. Transfer the money immediately to this safe account."
+                    },
+                    {
+                        "file":  "04_scam_secrecy.wav",
+                        "label":  "Scam-script synthetic speech",
+                        "script":  "Do not tell anyone about this request. Keep the transfer secret until our investigation is complete."
+                    },
+                    {
+                        "file":  "05_scam_credential_request.wav",
+                        "label":  "Scam-script synthetic speech",
+                        "script":  "Read your one time passcode aloud so I can stop the suspicious payment right now."
+                    },
+                    {
+                        "file":  "06_scam_authority.wav",
+                        "label":  "Scam-script synthetic speech",
+                        "script":  "I am a bank manager. Move your funds to the temporary security account before the alert expires."
+                    },
+                    {
+                        "file":  "07_benign_quoted_scam.wav",
+                        "label":  "Benign quoted scam-language control",
+                        "script":  "The message said, do not tell anyone and transfer immediately. I think it may be a scam, so I did not send anything."
+                    },
+                    {
+                        "file":  "08_scam_combined_pressure.wav",
+                        "label":  "Scam-script synthetic speech",
+                        "script":  "This is the bank security team. Transfer the money to the safe account immediately, and do not tell anyone."
+                    }
+                ],
+    "caveat":  "One built-in synthetic voice. No deepfake, replay, channel, microphone-injection, speaker, or linguistic diversity coverage."
+}
