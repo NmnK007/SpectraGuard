@@ -1,0 +1,5 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {features,validateModel,predict,FEATURE_VERSION} from '../src/models.mjs';
+test('baseline inference validates branch and parameters before scoring',()=>{const m={format:FEATURE_VERSION,branch:'synthetic',name:'Test-only baseline',bias:0,weights:Array(8).fill(0),mean:Array(8).fill(0),scale:Array(8).fill(1),validation:{samples:4}};assert.equal(predict(m,Array(8).fill(0)),50);assert.throws(()=>validateModel(m,'replay'));assert.throws(()=>predict({...m,scale:Array(8).fill(0)},Array(8).fill(0)));assert.throws(()=>predict(m,[NaN]));});
+test('feature extraction is finite for silence and consistent across sample rates',()=>{assert.ok(features(new Float32Array(48000),16000).every(Number.isFinite));const a=Float32Array.from({length:48000},(_,i)=>.2*Math.sin(2*Math.PI*500*i/16000));const b=Float32Array.from({length:144000},(_,i)=>.2*Math.sin(2*Math.PI*500*i/48000));const x=features(a,16000),y=features(b,48000);x.forEach((v,i)=>assert.ok(Math.abs(v-y[i])<.001));});

@@ -1,0 +1,10 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {scenarios,decide,contextFlags,report} from '../src/domain.mjs';
+import {analyzeSamples,spectrum} from '../src/audio.mjs';
+test('all six default scenarios preserve safe, proportionate outcomes',()=>{assert.deepEqual(scenarios.map(s=>decide(s).action),['Pause & verify','Continue normal checks','Step-up verification','Step-up verification','Reissue challenge','Retry or use another method']);});
+test('quality and session failures outrank alarming model scores',()=>{assert.equal(decide({...scenarios[0],quality:'poor'}).action,'Retry or use another method');assert.equal(decide({...scenarios[0],freshness:'expired'}).action,'Reissue challenge');});
+test('unavailable classifiers never become a pass; low scores do not override transaction risk',()=>{assert.equal(decide({...scenarios[1],synthetic:null,replay:null}).action,'Step-up verification');assert.equal(decide({...scenarios[1],amount:90000}).action,'Step-up verification');});
+test('context rules handle a direct credential request and a basic negation',()=>{assert.ok(contextFlags('Please share your OTP.').some(f=>f.code==='credential'));assert.ok(!contextFlags('Never share your OTP.').some(f=>f.code==='credential'));assert.ok(!contextFlags('No need to transfer immediately.').some(f=>f.code==='urgency'));});
+test('redacted evidence export excludes sensitive source fields',()=>{const r=report({...scenarios[0],transcript:'secret words',payee:'Private Name'});const json=JSON.stringify(r);assert.ok(!json.includes('secret words'));assert.ok(!json.includes('Private Name'));assert.ok(!json.includes('48500'));assert.equal(r.privacy.rawAudioIncluded,false);});
+test('silence and short samples are inconclusive; FFT peaks at the input frequency',()=>{assert.equal(analyzeSamples(new Float32Array(16000*3),16000).quality,'poor');const sine=Float32Array.from({length:48000},(_,i)=>.25*Math.sin(2*Math.PI*1000*i/16000));assert.equal(analyzeSamples(sine,16000).quality,'usable');const spec=spectrum(sine,0);assert.equal(spec.indexOf(Math.max(...spec)),32);assert.equal(analyzeSamples(sine.slice(0,1000),16000).quality,'poor');});
