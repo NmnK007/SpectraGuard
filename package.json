@@ -1,1 +1,25 @@
-{"name":"spectraguard","version":"0.1.0","private":true,"type":"module","scripts":{"dev":"node server/dev.mjs","build":"vite build && node scripts/build-worker.mjs","test":"node --test tests/*.test.mjs","start":"node server/dev.mjs"},"dependencies":{"@fontsource-variable/dm-sans":"^5.3.0","@fontsource/ibm-plex-mono":"^5.3.0","lucide-react":"^0.468.0","react":"^19.2.0","react-dom":"^19.2.0"},"devDependencies":{"esbuild":"^0.25.0","vite":"^7.2.0"}}
+{
+  "name": "spectraguard",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node server/dev.mjs",
+    "build": "vite build && node scripts/build-worker.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "start": "node server/dev.mjs",
+    "test:model": "node scripts/smoke-pretrained.mjs"
+  },
+  "dependencies": {
+    "@fontsource-variable/dm-sans": "^5.3.0",
+    "@fontsource/ibm-plex-mono": "^5.3.0",
+    "lucide-react": "^0.468.0",
+    "onnxruntime-web": "^1.31.1",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0",
+    "vite": "^7.2.0"
+  }
+}

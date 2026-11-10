@@ -14,7 +14,7 @@ export function analyzeSamples(samples,sampleRate){
  const frames=Array.from({length:240},(_,i)=>spectrum(samples,Math.floor(i*Math.max(0,samples.length-512)/240)));
  return {duration,rms,clipping,sampleRate,frames,features:features(samples,sampleRate),quality:duration<2||rms<.004||clipping>.03?'poor':'usable'};
 }
-export async function decodeAudio(blob){
+export async function decodeAudio(blob, classify){
  const bytes=await blob.arrayBuffer();const ctx=new AudioContext();
- try{const buffer=await ctx.decodeAudioData(bytes.slice(0));if(buffer.duration>30)throw new Error('Use a clip of 30 seconds or less.');const mono=new Float32Array(buffer.length);for(let c=0;c<buffer.numberOfChannels;c++){const data=buffer.getChannelData(c);for(let i=0;i<data.length;i++)mono[i]+=data[i]/buffer.numberOfChannels;}const result=analyzeSamples(mono,buffer.sampleRate);mono.fill(0);return {...result,digest:Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes)),x=>x.toString(16).padStart(2,'0')).join('')};}finally{await ctx.close();}
+ try{const buffer=await ctx.decodeAudioData(bytes.slice(0));if(buffer.duration>30)throw new Error('Use a clip of 30 seconds or less.');const mono=new Float32Array(buffer.length);for(let c=0;c<buffer.numberOfChannels;c++){const data=buffer.getChannelData(c);for(let i=0;i<data.length;i++)mono[i]+=data[i]/buffer.numberOfChannels;}const result=analyzeSamples(mono,buffer.sampleRate);let trained=null,modelError=null;try{if(classify&&result.quality==='usable')trained=await classify(mono,buffer.sampleRate);}catch(e){modelError=e.message||'Pretrained inference failed';}finally{mono.fill(0);}return {...result,trained,modelError,digest:Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes)),x=>x.toString(16).padStart(2,'0')).join('')};}finally{await ctx.close();}
 }

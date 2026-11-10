@@ -2,3 +2,7 @@ node_modules/
 dist/
 .local/
 *.log
+
+public/models/*.onnx
+public/models/*.download
+!public/models/replay.onnx
